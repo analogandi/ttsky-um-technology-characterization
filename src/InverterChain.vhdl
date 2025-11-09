@@ -34,7 +34,7 @@ begin
 
     GEN_INV : for i in 0 to chain_len-1 generate
         SIM_INV : if g_sim generate
-            chain(i+1) <= not chain(i) after sim_delay;
+            chain(i+1) <= not chain(i); -- after sim_delay;
         end generate;
 
         SYN_INV : if not g_sim generate
