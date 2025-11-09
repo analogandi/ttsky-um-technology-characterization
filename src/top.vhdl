@@ -18,7 +18,38 @@ entity tt_um_example is
 end tt_um_example;
 
 architecture RTL of tt_um_example is
-    -- wires to alias/rename the top port signals
+
+    --------------------------------------------------------------------
+    -- Component Declarations
+    --------------------------------------------------------------------
+    component ClockGen
+        port (
+            clk_50Mhz_in      : in  std_ulogic;
+            reset_n_in        : in  std_ulogic;
+            enable_in         : in  std_ulogic;
+            htol_1s_toggle    : out std_ulogic;
+            htol_1Mhz_toggle  : out std_ulogic;
+            htol_50Mhz_toggle : out std_ulogic
+        );
+    end component;
+
+    component InverterChain
+        generic (
+            g_sim      : boolean := true;
+            chain_len  : natural := 1024;
+            sim_delay  : time    := 25 ps
+        );
+        port (
+            chain_in   : in  std_ulogic;
+            chain_mid  : out std_ulogic;
+            chain_3q   : out std_ulogic;
+            chain_out  : out std_ulogic
+        );
+    end component;
+
+    --------------------------------------------------------------------
+    -- Signals
+    --------------------------------------------------------------------
     signal clk_50Mhz_in : std_ulogic;
     signal enable_in    : std_ulogic;
     signal reset_n_in   : std_ulogic;
@@ -50,7 +81,7 @@ architecture RTL of tt_um_example is
     signal inverter_chain_out3  : std_ulogic;
 
 begin
-    -- alias/rename the top port signals
+
     clk_50Mhz_in    <= clk;
     enable_in       <= ena;
     reset_n_in      <= rst_n;
@@ -65,25 +96,36 @@ begin
     uio_out            <= (others => '0');
     uio_oe             <= (others => '0');
 
-    clkgen_inst: entity work.ClockGen(RTL)
-    port map (
-        clk_50Mhz_in      => clk_50Mhz_in,
-        reset_n_in        => reset_n_in,
-        enable_in         => enable_in,
-        htol_1s_toggle    => htol_1s_toggle,
-        htol_1Mhz_toggle  => htol_1Mhz_toggle,
-        htol_50Mhz_toggle => htol_50Mhz_toggle
-    );
+    --------------------------------------------------------------------
+    -- Component Instantiations
+    --------------------------------------------------------------------
 
-    inverterchain_inst: entity work.InverterChain(RTL)
-    port map (
-        chain_in    => inverter_chain_in,
-        chain_mid   => inverter_chain_out1,
-        chain_3q    => inverter_chain_out2,
-        chain_out   => inverter_chain_out3
-    );
+    clkgen_inst: ClockGen
+        port map (
+            clk_50Mhz_in      => clk_50Mhz_in,
+            reset_n_in        => reset_n_in,
+            enable_in         => enable_in,
+            htol_1s_toggle    => htol_1s_toggle,
+            htol_1Mhz_toggle  => htol_1Mhz_toggle,
+            htol_50Mhz_toggle => htol_50Mhz_toggle
+        );
 
+    inverterchain_inst: InverterChain
+        generic map (
+            g_sim      => true,
+            chain_len  => 1024,
+            sim_delay  => 25 ps
+        )
+        port map (
+            chain_in    => inverter_chain_in,
+            chain_mid   => inverter_chain_out1,
+            chain_3q    => inverter_chain_out2,
+            chain_out   => inverter_chain_out3
+        );
 
+    --------------------------------------------------------------------
+    -- Remaining Logic
+    --------------------------------------------------------------------
 
     process(clk_50Mhz_in, reset_n_in)
     begin
@@ -96,20 +138,16 @@ begin
         end if;
     end process;
 
-    -- Mux control for HTOL led indicator
     htol_out <= '1' when htol_latched = '0' else htol_1s_toggle;
 
-    -- Mux control for pads
     pads_htol <= (htol_50Mhz_toggle & htol_1Mhz_toggle & '1' & '0');
-    pads_char <=    ("1111") when mode_in = x"0" else
-                    ("0000") when mode_in = x"1" else
-                    (pad_in & pad_in & pad_in & pad_in) when mode_in = x"2" 
-                    else ("0000");
+    pads_char <= ("1111") when mode_in = x"0" else
+                 ("0000") when mode_in = x"1" else
+                 (pad_in & pad_in & pad_in & pad_in) when mode_in = x"2"
+                 else ("0000");
 
-    uo_out(7 downto 4) <=   pads_char when (enable_in = '1' and htol_latched = '0') else
-                            pads_htol when (enable_in = '1' and htol_latched /= '0') else
-                            (others => '0');
-
+    uo_out(7 downto 4) <= pads_char when (enable_in = '1' and htol_latched = '0') else
+                          pads_htol when (enable_in = '1' and htol_latched /= '0') else
+                          (others => '0');
 
 end architecture RTL;
-
