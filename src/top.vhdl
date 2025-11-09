@@ -106,11 +106,6 @@ begin
         );
 
     inverterchain_inst: InverterChain
-        generic map (
-            g_sim      => true,
-            chain_len  => 1024,
-            sim_delay  => 25 ps
-        )
         port map (
             chain_in    => inverter_chain_in,
             chain_mid   => inverter_chain_out1,
