@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity clock_gen is
+entity ClockGen is
     port (
         clk_50Mhz_in       : in  std_logic;
         reset_n_in         : in  std_logic;   
@@ -11,9 +11,9 @@ entity clock_gen is
         htol_1Mhz_toggle   : out std_ulogic;
         htol_50Mhz_toggle  : out std_ulogic
     );
-end clock_gen;
+end ClockGen;
 
-architecture rtl of clock_gen is
+architecture RTL of ClockGen is
     constant CLK_FREQ      : integer := 50_000_000; 
     constant ONE_HZ_COUNT  : integer := CLK_FREQ / 2; 
     constant ONE_MHZ_COUNT : integer := 25;          
@@ -64,4 +64,4 @@ begin
     htol_1Mhz_toggle <= toggle_1Mhz;
     htol_50Mhz_toggle <= clk_50Mhz_in when enable_in = '1' else '0';
 
-end rtl;
+end RTL;

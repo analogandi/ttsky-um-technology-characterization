@@ -2,6 +2,8 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
+library work;
+
 entity tt_um_example is
     port (
         ui_in   : in  std_ulogic_vector(7 downto 0);
@@ -63,7 +65,7 @@ begin
     uio_out            <= (others => '0');
     uio_oe             <= (others => '0');
 
-    clkgen_inst: entity work.clock_gen
+    clkgen_inst: entity work.ClockGen(RTL)
     port map (
         clk_50Mhz_in      => clk_50Mhz_in,
         reset_n_in        => reset_n_in,
@@ -73,7 +75,7 @@ begin
         htol_50Mhz_toggle => htol_50Mhz_toggle
     );
 
-    inverterchain_inst: entity work.InverterChain
+    inverterchain_inst: entity work.InverterChain(RTL)
     port map (
         chain_in    => inverter_chain_in,
         chain_mid   => inverter_chain_out1,
