@@ -63,7 +63,7 @@ begin
     uio_out            <= (others => '0');
     uio_oe             <= (others => '0');
 
-    clkgen_inst: entity work.clock_gen
+    clkgen_inst: entity clock_gen
     port map (
         clk_50Mhz_in      => clk_50Mhz_in,
         reset_n_in        => reset_n_in,
@@ -73,7 +73,7 @@ begin
         htol_50Mhz_toggle => htol_50Mhz_toggle
     );
 
-    inverterchain_inst: entity work.InverterChain
+    inverterchain_inst: entity InverterChain
     port map (
         chain_in    => inverter_chain_in,
         chain_mid   => inverter_chain_out1,
