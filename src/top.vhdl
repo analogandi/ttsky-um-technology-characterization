@@ -4,7 +4,7 @@ use IEEE.numeric_std.all;
 
 library work;
 
-entity tt_um_example is
+entity ttsky_um_technology_characterization is
     port (
         ui_in   : in  std_ulogic_vector(7 downto 0);
         uo_out  : out std_ulogic_vector(7 downto 0);
@@ -15,9 +15,9 @@ entity tt_um_example is
         clk     : in  std_ulogic;
         rst_n   : in  std_ulogic
     );
-end tt_um_example;
+end ttsky_um_technology_characterization;
 
-architecture RTL of tt_um_example is
+architecture RTL of ttsky_um_technology_characterization is
 
     --------------------------------------------------------------------
     -- Component Declarations
