@@ -13,7 +13,7 @@ end InverterChain;
 
 architecture RTL of InverterChain is
 
-    constant g_sim     : boolean := false;
+    -- constant g_sim     : boolean := false;
     constant chain_len : natural := 1024;
     -- constant sim_delay : time    := 5 ns;
 
@@ -33,17 +33,17 @@ begin
     chain(0) <= chain_in;
 
     GEN_INV : for i in 0 to chain_len-1 generate
-        SIM_INV : if g_sim generate
-            chain(i+1) <= not chain(i); -- after sim_delay;
-        end generate;
+        --SIM_INV : if g_sim generate
+        --    chain(i+1) <= not chain(i); -- after sim_delay;
+        --end generate;
 
-        SYN_INV : if not g_sim generate
+        --SYN_INV : if not g_sim generate
             INV_INST : inv_hd_1_wrapper
                 port map(
                     A => chain(i),
                     Y => chain(i+1)
                 );
-        end generate;
+        -- end generate;
     end generate;
 
     chain_mid <= chain(chain_len/2);

@@ -54,7 +54,6 @@ architecture RTL of tt_um_example is
     signal pad_in   : std_ulogic;
     signal mode_in  : std_ulogic_vector(3 downto 0);
 
-    signal htol_out         : std_ulogic;
     signal chain_out        : std_ulogic;
     signal pad_50mhz_out    : std_ulogic;
     signal pad_1mhz_out     : std_ulogic;
@@ -128,7 +127,6 @@ begin
         end if;
     end process;
 
-    htol_out <= '1' when htol_latched = '0' else htol_1s_toggle;
 
     pads_htol <= (htol_50Mhz_toggle & htol_1Mhz_toggle & '1' & '0');
     pads_char <= ("1111") when mode_in = x"0" else
@@ -139,5 +137,8 @@ begin
     uo_out(7 downto 4) <= pads_char when (enable_in = '1' and htol_latched = '0') else
                           pads_htol when (enable_in = '1' and htol_latched /= '0') else
                           (others => '0');
+
+    uo_out(1) <= chain_out;
+    uo_out(0) <= '1' when htol_latched = '0' else htol_1s_toggle;
 
 end architecture RTL;
