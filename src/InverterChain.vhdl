@@ -15,7 +15,7 @@ architecture RTL of InverterChain is
 
     constant g_sim     : boolean := false;
     constant chain_len : natural := 1024;
-    constant sim_delay : time    := 5 ns;
+    -- constant sim_delay : time    := 5 ns;
 
     signal chain : std_logic_vector(chain_len downto 0);
     attribute keep : string;

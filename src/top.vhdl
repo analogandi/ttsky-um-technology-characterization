@@ -34,11 +34,6 @@ architecture RTL of tt_um_example is
     end component;
 
     component InverterChain
-        generic (
-            g_sim      : boolean := true;
-            chain_len  : natural := 1024;
-            sim_delay  : time    := 25 ps
-        );
         port (
             chain_in   : in  std_ulogic;
             chain_mid  : out std_ulogic;
