@@ -32,7 +32,7 @@ architecture RTL of tt_um_example is
     ----------------------------------------------------------------------
     -- Inverter chain length
     ----------------------------------------------------------------------
-    constant g_chainDepth : natural := 4096;
+    constant g_chainDepth : natural := 1024;
 
     ----------------------------------------------------------------------
     -- Chain signals
