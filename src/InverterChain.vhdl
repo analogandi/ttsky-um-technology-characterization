@@ -3,6 +3,11 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity InverterChain is
+    generic (
+        g_sim     : boolean := false;
+        chain_len : natural := 1024;
+        sim_delay : time    := 5 ns
+    );
     port(
         chain_in   : in  std_logic;
         chain_mid  : out std_logic;
@@ -12,10 +17,6 @@ entity InverterChain is
 end InverterChain;
 
 architecture RTL of InverterChain is
-
-    constant g_sim     : boolean := false;
-    constant chain_len : natural := 1024;
-    constant sim_delay : time    := 5 ns;
 
     signal chain : std_logic_vector(chain_len downto 0);
     attribute keep : string;
