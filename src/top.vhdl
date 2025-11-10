@@ -88,6 +88,11 @@ architecture RTL of tt_um_technology_characterization is
     signal buffer_chain_out2    : std_ulogic;
     signal buffer_chain_out3    : std_ulogic;
 
+    signal ro_in    : std_ulogic;
+    signal ro_out1  : std_ulogic;
+    signal ro_out2  : std_ulogic;
+    signal ro_out3  : std_ulogic;
+
 begin
 
     clk_50Mhz_in    <= clk;
@@ -101,6 +106,9 @@ begin
     inverter_chain_in   <= chain_in;
     buffer_chain_in   <= chain_in;
     chain_out <= inverter_chain_out3;
+
+    ro_in <= ro_out3;
+
 
     uio_out            <= (others => '0');
     uio_oe             <= (others => '0');
@@ -135,6 +143,17 @@ begin
             chain_out   => buffer_chain_out3
         );
 
+    RingOsc_inst: InverterChain
+        generic map (
+            chain_len => 1023
+        )
+        port map (
+            chain_in   => ro_in,
+            chain_mid  => ro_out1,
+            chain_3q   => ro_out2,
+            chain_out  => ro_out3
+        );
+
         
 
     --------------------------------------------------------------------
@@ -163,6 +182,7 @@ begin
                           pads_htol when (enable_in = '1' and htol_latched /= '0') else
                           (others => '0');
 
+    uo_out(3) <= ro_out3;
     uo_out(2) <= buffer_chain_out3;
     uo_out(1) <= chain_out;
     uo_out(0) <= '1' when htol_latched = '0' else htol_1s_toggle;
