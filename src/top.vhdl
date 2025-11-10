@@ -72,13 +72,17 @@ architecture RTL of tt_um_technology_characterization is
     signal pad_in   : std_ulogic;
     signal mode_in  : std_ulogic_vector(3 downto 0);
 
-    signal chain_out        : std_ulogic;
+    signal inverter_chain_out   : std_ulogic;
+    signal buffer_chain_out     : std_ulogic;
+    signal ro_out               : std_ulogic;
+
     signal pad_50mhz_out    : std_ulogic;
     signal pad_1mhz_out     : std_ulogic;
     signal pad_high         : std_ulogic;
     signal pad_low          : std_ulogic;
 
     signal htol_latched     : std_ulogic := '0';
+    signal mode_latched     : std_ulogic_vector(3 downto 0);
 
     signal htol_1s_toggle       : std_ulogic;
     signal htol_1Mhz_toggle     : std_ulogic;
@@ -113,13 +117,6 @@ begin
     mode_in         <= uio_in(4 downto 1);
     chain_in        <= uio_in(6);
     pad_in          <= uio_in(7);
-
-    inverter_chain_in   <= chain_in;
-    buffer_chain_in   <= chain_in;
-    chain_out <= inverter_chain_out3;
-
-    ro_in <= ro_out3;
-
 
     uio_out            <= (others => '0');
     uio_oe             <= (others => '0');
@@ -172,27 +169,59 @@ begin
     begin
         if reset_n_in = '0' then
             htol_latched <= '0';
+            mode_latched <= (others => '0');
         elsif rising_edge(clk_50Mhz_in) then
             if enable_in = '1' then
                 htol_latched <= htol_in;
+                mode_latched <= mode_in;
             end if;
         end if;
     end process;
 
 
+   -- input mux control
+    inverter_chain_in   <=  chain_in            when (enable_in = '1' and htol_latched = '0') else
+                            htol_50Mhz_toggle   when (enable_in = '1' and htol_latched = '1') else
+                            (others => '0');
+    buffer_chain_in     <=  chain_in            when (enable_in = '1' and htol_latched = '0') else
+                            htol_50Mhz_toggle   when (enable_in = '1' and htol_latched = '1') else
+                            (others => '0');
+    ro_in   <=  ro_out3 when (enable_in = '1') else '0';
+
+
+    -- output mux control
     pads_htol <= (htol_50Mhz_toggle & htol_1Mhz_toggle & '1' & '0');
-    pads_char <= ("1111") when mode_in = x"0" else
-                 ("0000") when mode_in = x"1" else
-                 (pad_in & pad_in & pad_in & pad_in) when mode_in = x"2"
+    pads_char <= ("1111") when mode_latched = x"0" else
+                 ("0000") when mode_latched = x"1" else
+                 (pad_in & pad_in & pad_in & pad_in) when mode_latched = x"2"
                  else ("0000");
+                 
+    inverter_chain_out <=   inverter_chain_out1 when (mode_latched = x"3" enable_in = '1' and htol_latched = '0') else
+                            inverter_chain_out2 when (mode_latched = x"4" enable_in = '1' and htol_latched = '0') else
+                            inverter_chain_out3 when (mode_latched = x"5" enable_in = '1' and htol_latched = '0') else
+                            inverter_chain_out3 when (enable_in = '1' and htol_latched = '1') else
+                            '0';
 
+    buffer_chain_out <= buffer_chain_out1 when (mode_latched = x"6" enable_in = '1' and htol_latched = '0') else
+                        buffer_chain_out2 when (mode_latched = x"7" enable_in = '1' and htol_latched = '0') else
+                        buffer_chain_out3 when (mode_latched = x"8" enable_in = '1' and htol_latched = '0') else
+                        buffer_chain_out3 when (enable_in = '1' and htol_latched = '1') else
+                        '0';
+
+    ro_out <=   ro_out1 when (mode_latched = x"9" enable_in = '1' and htol_latched = '0') else
+                ro_out2 when (mode_latched = x"A" enable_in = '1' and htol_latched = '0') else
+                ro_out3 when (mode_latched = x"B" enable_in = '1' and htol_latched = '0') else
+                ro_out3 when (enable_in = '1' and htol_latched = '1') else
+                '0';
+    
+
+    -- output pad assignments
     uo_out(7 downto 4) <= pads_char when (enable_in = '1' and htol_latched = '0') else
-                          pads_htol when (enable_in = '1' and htol_latched /= '0') else
+                          pads_htol when (enable_in = '1' and htol_latched = '1') else
                           (others => '0');
-
-    uo_out(3) <= ro_out3;
-    uo_out(2) <= buffer_chain_out3;
-    uo_out(1) <= chain_out;
+    uo_out(3) <= ro_out;
+    uo_out(2) <= buffer_chain_out1;
+    uo_out(1) <= inverter_chain_out;
     uo_out(0) <= '1' when htol_latched = '0' else htol_1s_toggle;
 
 end architecture RTL;
