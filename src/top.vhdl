@@ -93,6 +93,8 @@ architecture RTL of tt_um_technology_characterization is
     signal ro_out2  : std_ulogic;
     signal ro_out3  : std_ulogic;
 
+    constant c_ro_length : natural := 1023;
+
 begin
 
     clk_50Mhz_in    <= clk;
@@ -145,7 +147,7 @@ begin
 
     RingOsc_inst: InverterChain
         generic map (
-            chain_len => 1023
+            chain_len => c_ro_length
         )
         port map (
             chain_in   => ro_in,
