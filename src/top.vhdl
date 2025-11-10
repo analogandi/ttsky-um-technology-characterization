@@ -195,22 +195,22 @@ begin
                  ("0000") when mode_latched = x"1" else
                  (pad_in & pad_in & pad_in & pad_in) when mode_latched = x"2"
                  else ("0000");
-                 
-    inverter_chain_out <=   inverter_chain_out1 when (mode_latched = x"3" enable_in = '1' and htol_latched = '0') else
-                            inverter_chain_out2 when (mode_latched = x"4" enable_in = '1' and htol_latched = '0') else
-                            inverter_chain_out3 when (mode_latched = x"5" enable_in = '1' and htol_latched = '0') else
+
+    inverter_chain_out <=   inverter_chain_out1 when (mode_latched = x"3" and enable_in = '1' and htol_latched = '0') else
+                            inverter_chain_out2 when (mode_latched = x"4" and enable_in = '1' and htol_latched = '0') else
+                            inverter_chain_out3 when (mode_latched = x"5" and enable_in = '1' and htol_latched = '0') else
                             inverter_chain_out3 when (enable_in = '1' and htol_latched = '1') else
                             '0';
 
-    buffer_chain_out <= buffer_chain_out1 when (mode_latched = x"6" enable_in = '1' and htol_latched = '0') else
-                        buffer_chain_out2 when (mode_latched = x"7" enable_in = '1' and htol_latched = '0') else
-                        buffer_chain_out3 when (mode_latched = x"8" enable_in = '1' and htol_latched = '0') else
+    buffer_chain_out <= buffer_chain_out1 when (mode_latched = x"6" and enable_in = '1' and htol_latched = '0') else
+                        buffer_chain_out2 when (mode_latched = x"7" and enable_in = '1' and htol_latched = '0') else
+                        buffer_chain_out3 when (mode_latched = x"8" and enable_in = '1' and htol_latched = '0') else
                         buffer_chain_out3 when (enable_in = '1' and htol_latched = '1') else
                         '0';
 
-    ro_out <=   ro_out1 when (mode_latched = x"9" enable_in = '1' and htol_latched = '0') else
-                ro_out2 when (mode_latched = x"A" enable_in = '1' and htol_latched = '0') else
-                ro_out3 when (mode_latched = x"B" enable_in = '1' and htol_latched = '0') else
+    ro_out <=   ro_out1 when (mode_latched = x"9" and enable_in = '1' and htol_latched = '0') else
+                ro_out2 when (mode_latched = x"A" and enable_in = '1' and htol_latched = '0') else
+                ro_out3 when (mode_latched = x"B" and enable_in = '1' and htol_latched = '0') else
                 ro_out3 when (enable_in = '1' and htol_latched = '1') else
                 '0';
     
