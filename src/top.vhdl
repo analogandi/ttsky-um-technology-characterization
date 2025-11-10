@@ -185,7 +185,12 @@ begin
     buffer_chain_in     <=  chain_in            when (enable_in = '1' and htol_latched = '0') else
                             htol_50Mhz_toggle   when (enable_in = '1' and htol_latched = '1') else
                             '0';
-    ro_in   <=  ro_out3 when (enable_in = '1') else '0';
+
+    ro_in <=    ro_out1 when (mode_latched = x"9" and enable_in = '1' and htol_latched = '0') else
+                ro_out2 when (mode_latched = x"A" and enable_in = '1' and htol_latched = '0') else
+                ro_out3 when (mode_latched = x"B" and enable_in = '1' and htol_latched = '0') else
+                ro_out3 when (enable_in = '1' and htol_latched = '1') else
+                '0';
 
     --------------------------------------------------------------------
     -- Output mux control
@@ -208,11 +213,8 @@ begin
                         buffer_chain_out3 when (enable_in = '1' and htol_latched = '1') else
                         '0';
 
-    ro_out <=   ro_out1 when (mode_latched = x"9" and enable_in = '1' and htol_latched = '0') else
-                ro_out2 when (mode_latched = x"A" and enable_in = '1' and htol_latched = '0') else
-                ro_out3 when (mode_latched = x"B" and enable_in = '1' and htol_latched = '0') else
-                ro_out3 when (enable_in = '1' and htol_latched = '1') else
-                '0';
+    ro_out  <=  ro_out3 when (enable_in = '1') else '0';
+
     
     --------------------------------------------------------------------
     -- Output pad assignments

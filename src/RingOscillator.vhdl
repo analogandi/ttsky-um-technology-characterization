@@ -47,8 +47,8 @@ begin
         end generate;
     end generate;
 
-    chain_mid <= chain(chain_len/2);
-    chain_3q  <= chain((3*chain_len)/4);
+    chain_mid <= chain(512);
+    chain_3q  <= chain(768);
     chain_out <= chain(chain_len);
 
 end RTL;
