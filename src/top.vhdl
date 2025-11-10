@@ -42,6 +42,15 @@ architecture RTL of tt_um_technology_characterization is
         );
     end component;
 
+    component BufferChain
+    port (
+        chain_in   : in  std_ulogic;
+        chain_mid  : out std_ulogic;
+        chain_3q   : out std_ulogic;
+        chain_out  : out std_ulogic
+    );
+    end component;
+
     --------------------------------------------------------------------
     -- Signals
     --------------------------------------------------------------------
@@ -74,6 +83,11 @@ architecture RTL of tt_um_technology_characterization is
     signal inverter_chain_out2  : std_ulogic;
     signal inverter_chain_out3  : std_ulogic;
 
+    signal buffer_chain_in      : std_ulogic;
+    signal buffer_chain_out1    : std_ulogic;
+    signal buffer_chain_out2    : std_ulogic;
+    signal buffer_chain_out3    : std_ulogic;
+
 begin
 
     clk_50Mhz_in    <= clk;
@@ -85,6 +99,7 @@ begin
     pad_in          <= uio_in(7);
 
     inverter_chain_in   <= chain_in;
+    buffer_chain_in   <= chain_in;
     chain_out <= inverter_chain_out3;
 
     uio_out            <= (others => '0');
@@ -112,6 +127,16 @@ begin
             chain_out   => inverter_chain_out3
         );
 
+    bufferchain_inst: BufferChain
+        port map (
+            chain_in    => buffer_chain_in,
+            chain_mid   => buffer_chain_out1,
+            chain_3q    => buffer_chain_out2,
+            chain_out   => buffer_chain_out3
+        );
+
+        
+
     --------------------------------------------------------------------
     -- Remaining Logic
     --------------------------------------------------------------------
@@ -138,6 +163,7 @@ begin
                           pads_htol when (enable_in = '1' and htol_latched /= '0') else
                           (others => '0');
 
+    uo_out(2) <= buffer_chain_out3;
     uo_out(1) <= chain_out;
     uo_out(0) <= '1' when htol_latched = '0' else htol_1s_toggle;
 
