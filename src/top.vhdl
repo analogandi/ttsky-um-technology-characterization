@@ -43,12 +43,21 @@ architecture RTL of tt_um_technology_characterization is
     end component;
 
     component BufferChain
-    port (
-        chain_in   : in  std_ulogic;
-        chain_mid  : out std_ulogic;
-        chain_3q   : out std_ulogic;
-        chain_out  : out std_ulogic
-    );
+        port (
+            chain_in   : in  std_ulogic;
+            chain_mid  : out std_ulogic;
+            chain_3q   : out std_ulogic;
+            chain_out  : out std_ulogic
+        );
+    end component;
+
+    component RingOscillator
+        port (
+            chain_in   : in  std_ulogic;
+            chain_mid  : out std_ulogic;
+            chain_3q   : out std_ulogic;
+            chain_out  : out std_ulogic
+        );
     end component;
 
     --------------------------------------------------------------------
