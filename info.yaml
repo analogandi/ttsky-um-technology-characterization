@@ -21,6 +21,7 @@ project:
     - "ClockGen.vhdl"
     - "InverterWrapper.v"
     - "InverterChain.vhdl"
+    - "RingOscillator.vhdl"
     - "BufferWrapper.v"
     - "BufferChain.vhdl"
 

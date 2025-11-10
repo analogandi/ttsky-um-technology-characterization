@@ -145,10 +145,7 @@ begin
             chain_out   => buffer_chain_out3
         );
 
-    RingOsc_inst: InverterChain
-        generic map (
-            chain_len => c_ro_length
-        )
+    RingOsc_inst: RingOscillator
         port map (
             chain_in   => ro_in,
             chain_mid  => ro_out1,
